@@ -1,22 +1,22 @@
 /* Modern Money Manager Styles */
 :root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --success-color: #48bb78;
-    --danger-color: #f56565;
-    --warning-color: #ed8936;
-    --info-color: #4299e1;
-    --light-color: #f7fafc;
-    --dark-color: #2d3748;
-    --gray-100: #f7fafc;
-    --gray-200: #edf2f7;
-    --gray-300: #e2e8f0;
-    --gray-400: #cbd5e0;
-    --gray-500: #a0aec0;
-    --gray-600: #718096;
-    --gray-700: #4a5568;
-    --gray-800: #2d3748;
-    --gray-900: #1a202c;
+    --primary-color: #0ea5e9;
+    --secondary-color: #06b6d4;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
+    --light-color: #f0f9ff;
+    --dark-color: #0c4a6e;
+    --gray-100: #f0f9ff;
+    --gray-200: #e0f2fe;
+    --gray-300: #bae6fd;
+    --gray-400: #7dd3fc;
+    --gray-500: #38bdf8;
+    --gray-600: #0ea5e9;
+    --gray-700: #0284c7;
+    --gray-800: #0369a1;
+    --gray-900: #0c4a6e;
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -34,7 +34,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #0891b2 100%);
     min-height: 100vh;
     color: var(--dark-color);
     line-height: 1.6;
@@ -571,27 +571,27 @@ body {
 
 /* Dark Mode */
 .dark-mode {
-    --primary-color: #8b5cf6;
-    --secondary-color: #a855f7;
+    --primary-color: #38bdf8;
+    --secondary-color: #22d3ee;
     --success-color: #10b981;
     --danger-color: #ef4444;
     --warning-color: #f59e0b;
     --info-color: #3b82f6;
-    --light-color: #1f2937;
-    --dark-color: #f9fafb;
-    --gray-100: #1f2937;
-    --gray-200: #374151;
-    --gray-300: #4b5563;
-    --gray-400: #6b7280;
-    --gray-500: #9ca3af;
-    --gray-600: #d1d5db;
-    --gray-700: #e5e7eb;
-    --gray-800: #f3f4f6;
-    --gray-900: #f9fafb;
+    --light-color: #0c4a6e;
+    --dark-color: #f0f9ff;
+    --gray-100: #0c4a6e;
+    --gray-200: #075985;
+    --gray-300: #0369a1;
+    --gray-400: #0284c7;
+    --gray-500: #0ea5e9;
+    --gray-600: #38bdf8;
+    --gray-700: #7dd3fc;
+    --gray-800: #bae6fd;
+    --gray-900: #f0f9ff;
 }
 
 .dark-mode body {
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    background: linear-gradient(135deg, #0c4a6e 0%, #075985 50%, #0369a1 100%);
     color: var(--dark-color);
 }
 
@@ -600,33 +600,33 @@ body {
 .dark-mode .transactions-section,
 .dark-mode .budgets-section,
 .dark-mode .goals-section {
-    background: rgba(31, 41, 55, 0.95);
-    border: 1px solid rgba(75, 85, 99, 0.3);
+    background: rgba(12, 74, 110, 0.95);
+    border: 1px solid rgba(7, 89, 133, 0.3);
 }
 
 .dark-mode .header {
-    background: rgba(31, 41, 55, 0.95);
-    border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+    background: rgba(12, 74, 110, 0.95);
+    border-bottom: 1px solid rgba(7, 89, 133, 0.3);
 }
 
 .dark-mode .modal-content {
-    background: #1f2937;
-    color: #f9fafb;
+    background: #0c4a6e;
+    color: #f0f9ff;
 }
 
 .dark-mode .form-group input,
 .dark-mode .form-group select,
 .dark-mode .form-group textarea {
-    background: #374151;
-    border-color: #4b5563;
-    color: #f9fafb;
+    background: #075985;
+    border-color: #0369a1;
+    color: #f0f9ff;
 }
 
 .dark-mode .form-group input:focus,
 .dark-mode .form-group select:focus,
 .dark-mode .form-group textarea:focus {
     border-color: var(--primary-color);
-    background: #4b5563;
+    background: #0369a1;
 }
 
 /* Budgets Section */
