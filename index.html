@@ -18,6 +18,12 @@
                     <h1>Pennywise</h1>
                 </div>
                 <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="toggleDarkMode()">
+                        <i class="fas fa-moon"></i> Dark Mode
+                    </button>
+                    <button class="btn btn-secondary" onclick="openSettingsModal()">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
                     <button class="btn btn-primary" onclick="openTransactionModal()">
                         <i class="fas fa-plus"></i> Add Transaction
                     </button>
@@ -65,6 +71,36 @@
                 </div>
             </section>
 
+            <!-- Budgets Section -->
+            <section class="budgets-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-wallet"></i> Budgets</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openBudgetModal()">
+                            <i class="fas fa-plus"></i> Add Budget
+                        </button>
+                    </div>
+                </div>
+                <div class="budgets-grid" id="budgets-grid">
+                    <!-- Budgets will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Savings Goals Section -->
+            <section class="goals-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-piggy-bank"></i> Savings Goals</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openGoalModal()">
+                            <i class="fas fa-plus"></i> Add Goal
+                        </button>
+                    </div>
+                </div>
+                <div class="goals-grid" id="goals-grid">
+                    <!-- Goals will be loaded here -->
+                </div>
+            </section>
+
             <!-- Charts Section -->
             <section class="charts-section">
                 <div class="chart-container">
@@ -86,7 +122,13 @@
                             <i class="fas fa-sync-alt"></i> Refresh
                         </button>
                         <button class="btn btn-secondary" onclick="exportData()">
-                            <i class="fas fa-download"></i> Export
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportAllData()">
+                            <i class="fas fa-database"></i> Backup All
+                        </button>
+                        <button class="btn btn-secondary" onclick="openImportModal()">
+                            <i class="fas fa-upload"></i> Import
                         </button>
                     </div>
                 </div>
@@ -174,6 +216,128 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div id="budget-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Budget</h2>
+                <button class="close-btn" onclick="closeBudgetModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="budget-form" class="budget-form">
+                <div class="form-group">
+                    <label for="budget-category">Category</label>
+                    <select id="budget-category" name="category" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="budget-amount">Amount</label>
+                    <input type="number" id="budget-amount" name="amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="budget-period">Period</label>
+                    <select id="budget-period" name="period">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeBudgetModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Budget</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Savings Goal Modal -->
+    <div id="goal-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Savings Goal</h2>
+                <button class="close-btn" onclick="closeGoalModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="goal-form" class="goal-form">
+                <div class="form-group">
+                    <label for="goal-name">Goal Name</label>
+                    <input type="text" id="goal-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="goal-amount">Target Amount</label>
+                    <input type="number" id="goal-amount" name="amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="goal-date">Target Date</label>
+                    <input type="date" id="goal-date" name="date" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeGoalModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-btn" onclick="closeSettingsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="settings-form">
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+                        Dark Mode
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="notifications-toggle" onchange="toggleNotifications()">
+                        Enable Notifications
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="auto-backup-toggle" onchange="toggleAutoBackup()">
+                        Auto Backup (Daily)
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeSettingsModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Import Data</h2>
+                <button class="close-btn" onclick="closeImportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="import-form">
+                <div class="form-group">
+                    <label for="import-file">Select Backup File</label>
+                    <input type="file" id="import-file" accept=".json" onchange="handleFileImport(this)">
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeImportModal()">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
 
