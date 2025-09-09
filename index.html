@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pennywise - Money Manager</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-coins"></i>
+                    <h1>Pennywise</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openTransactionModal()">
+                        <i class="fas fa-plus"></i> Add Transaction
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Summary Cards -->
+            <section class="summary-section">
+                <div class="summary-cards">
+                    <div class="summary-card income-card">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Income</h3>
+                            <div class="amount" id="total-income">$0.00</div>
+                            <div class="subtitle" id="monthly-income">This month: $0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card expense-card">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Expenses</h3>
+                            <div class="amount" id="total-expenses">$0.00</div>
+                            <div class="subtitle" id="monthly-expenses">This month: $0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card balance-card">
+                        <div class="card-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Balance</h3>
+                            <div class="amount" id="balance">$0.00</div>
+                            <div class="subtitle" id="balance-status">Positive</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="chart-container">
+                    <h2><i class="fas fa-chart-pie"></i> Expense Breakdown</h2>
+                    <div id="expense-chart" class="chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h2><i class="fas fa-chart-line"></i> Monthly Spending</h2>
+                    <div id="monthly-chart" class="chart"></div>
+                </div>
+            </section>
+
+            <!-- Transactions Section -->
+            <section class="transactions-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> Recent Transactions</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportData()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <div class="transactions-list" id="transactions-list">
+                    <!-- Transactions will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div id="transaction-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Transaction</h2>
+                <button class="close-btn" onclick="closeTransactionModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="transaction-form" class="transaction-form">
+                <div class="form-group">
+                    <label for="transaction-type">Type</label>
+                    <select id="transaction-type" name="type" required>
+                        <option value="">Select Type</option>
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transaction-category">Category</label>
+                    <select id="transaction-category" name="category" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transaction-amount">Amount</label>
+                    <input type="number" id="transaction-amount" name="amount" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transaction-description">Description</label>
+                    <input type="text" id="transaction-description" name="description" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transaction-date">Date</label>
+                    <input type="date" id="transaction-date" name="date" required>
+                </div>
+
+                <!-- Salary Configuration (for Income type) -->
+                <div id="salary-config" class="salary-config" style="display: none;">
+                    <h3><i class="fas fa-briefcase"></i> Salary Configuration</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="salary-enabled" name="salary_enabled">
+                            Enable Salary Management
+                        </label>
+                    </div>
+                    <div class="salary-fields">
+                        <div class="form-group">
+                            <label for="salary-amount">Salary Amount</label>
+                            <input type="number" id="salary-amount" name="salary_amount" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="salary-frequency">Frequency</label>
+                            <select id="salary-frequency" name="salary_frequency">
+                                <option value="weekly">Weekly</option>
+                                <option value="biweekly">Bi-weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="salary-pay-day">Pay Day</label>
+                            <input type="number" id="salary-pay-day" name="salary_pay_day" min="1" max="31">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeTransactionModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="static/js/app.js"></script>
+</body>
+</html>

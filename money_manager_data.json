@@ -1,0 +1,47 @@
+{
+  "transactions": [
+    {
+      "type": "Income",
+      "amount": 100.0,
+      "category": "Salary",
+      "description": "",
+      "date": "2025-09-09",
+      "id": 1
+    },
+    {
+      "type": "Income",
+      "amount": 100.0,
+      "category": "Investment",
+      "description": "",
+      "date": "2025-09-09",
+      "id": 2
+    }
+  ],
+  "categories": {
+    "Income": [
+      "Salary",
+      "Freelance",
+      "Investment",
+      "Gift",
+      "Other"
+    ],
+    "Expense": [
+      "Food",
+      "Transportation",
+      "Entertainment",
+      "Bills",
+      "Shopping",
+      "Healthcare",
+      "Education",
+      "Other"
+    ]
+  },
+  "budgets": {},
+  "salary_config": {
+    "amount": 0,
+    "frequency": "Monthly",
+    "pay_day": 1,
+    "next_pay_date": null,
+    "enabled": false
+  }
+}
