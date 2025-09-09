@@ -35,6 +35,7 @@ class MoneyManager {
         this.setupEventListeners();
         this.updateDisplay();
         this.loadCharts();
+        this.setupDevMode();
     }
 
     loadData() {
@@ -795,6 +796,467 @@ class MoneyManager {
                 this.exportAllData();
             }, 24 * 60 * 60 * 1000); // Daily backup
         }
+    }
+
+    // ===== DEVELOPER MODE =====
+    setupDevMode() {
+        this.devMode = {
+            active: false,
+            sequence: '',
+            targetSequence: 'exman',
+            devPanel: null
+        };
+        
+        // Listen for key combinations
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === '`') {
+                this.activateDevMode();
+            }
+        });
+        
+        // Listen for typing when dev mode is active
+        document.addEventListener('keydown', (e) => {
+            if (this.devMode.active && e.key.length === 1) {
+                this.devMode.sequence += e.key.toLowerCase();
+                
+                // Check if sequence matches
+                if (this.devMode.sequence === this.devMode.targetSequence) {
+                    this.showDevPanel();
+                } else if (!this.devMode.targetSequence.startsWith(this.devMode.sequence)) {
+                    // Reset if sequence doesn't match
+                    this.devMode.sequence = '';
+                }
+            }
+        });
+    }
+
+    activateDevMode() {
+        this.devMode.active = true;
+        this.devMode.sequence = '';
+        this.showToast('Dev Mode Activated! Type "exman" to access developer tools', 'info');
+        
+        // Auto-deactivate after 10 seconds
+        setTimeout(() => {
+            if (this.devMode.active) {
+                this.devMode.active = false;
+                this.devMode.sequence = '';
+                this.showToast('Dev Mode Deactivated', 'info');
+            }
+        }, 10000);
+    }
+
+    showDevPanel() {
+        this.devMode.active = false;
+        this.devMode.sequence = '';
+        
+        // Create dev panel if it doesn't exist
+        if (!this.devMode.devPanel) {
+            this.createDevPanel();
+        }
+        
+        this.devMode.devPanel.style.display = 'flex';
+        this.showToast('Welcome to Developer Mode! 🚀', 'success');
+    }
+
+    createDevPanel() {
+        const panel = document.createElement('div');
+        panel.id = 'dev-panel';
+        panel.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+        `;
+        
+        panel.innerHTML = `
+            <div style="
+                background: #000;
+                border: 2px solid #00ff00;
+                border-radius: 10px;
+                padding: 20px;
+                max-width: 800px;
+                max-height: 600px;
+                overflow-y: auto;
+                position: relative;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    border-bottom: 1px solid #00ff00;
+                    padding-bottom: 10px;
+                ">
+                    <h2 style="color: #00ff00; margin: 0;">🚀 PENNYWISE DEVELOPER MODE</h2>
+                    <button onclick="this.parentElement.parentElement.parentElement.style.display='none'" 
+                            style="
+                                background: #ff0000;
+                                color: white;
+                                border: none;
+                                padding: 5px 10px;
+                                border-radius: 3px;
+                                cursor: pointer;
+                            ">✕</button>
+                </div>
+                
+                <div id="dev-content">
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #00ff00;">📊 Application Stats</h3>
+                        <div id="app-stats"></div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #00ff00;">🔧 Developer Tools</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            <button onclick="moneyManager.devGenerateTestData()" 
+                                    style="background: #0066cc; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                📝 Generate Test Data
+                            </button>
+                            <button onclick="moneyManager.devClearAllData()" 
+                                    style="background: #cc0000; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                🗑️ Clear All Data
+                            </button>
+                            <button onclick="moneyManager.devExportDebugInfo()" 
+                                    style="background: #006600; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                📤 Export Debug Info
+                            </button>
+                            <button onclick="moneyManager.devShowConsole()" 
+                                    style="background: #6600cc; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                🖥️ Show Console
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #00ff00;">🎮 Easter Eggs</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            <button onclick="moneyManager.devRainbowMode()" 
+                                    style="background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                🌈 Rainbow Mode
+                            </button>
+                            <button onclick="moneyManager.devMoneyRain()" 
+                                    style="background: #ffd700; color: black; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                💰 Money Rain
+                            </button>
+                            <button onclick="moneyManager.devMatrixMode()" 
+                                    style="background: #000; color: #00ff00; border: 1px solid #00ff00; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                🔢 Matrix Mode
+                            </button>
+                            <button onclick="moneyManager.devKonamiCode()" 
+                                    style="background: #800080; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                🎮 Konami Code
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="color: #00ff00;">📈 Performance Metrics</h3>
+                        <div id="performance-metrics"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(panel);
+        this.devMode.devPanel = panel;
+        this.updateDevStats();
+    }
+
+    updateDevStats() {
+        if (!this.devMode.devPanel) return;
+        
+        const stats = document.getElementById('app-stats');
+        const performance = document.getElementById('performance-metrics');
+        
+        if (stats) {
+            stats.innerHTML = `
+                <div style="font-family: monospace; font-size: 12px; line-height: 1.4;">
+                    <div>📊 Total Transactions: ${this.transactions.length}</div>
+                    <div>💰 Total Income: $${this.transactions.filter(t => t.type === 'Income').reduce((sum, t) => sum + t.amount, 0).toFixed(2)}</div>
+                    <div>💸 Total Expenses: $${this.transactions.filter(t => t.type === 'Expense').reduce((sum, t) => sum + t.amount, 0).toFixed(2)}</div>
+                    <div>🎯 Budgets Set: ${Object.keys(this.budgets).length}</div>
+                    <div>🏆 Savings Goals: ${this.savingsGoals.length}</div>
+                    <div>🔄 Recurring Transactions: ${this.recurringTransactions.length}</div>
+                    <div>💾 Storage Used: ${this.getStorageSize()} KB</div>
+                    <div>⏰ Uptime: ${this.getUptime()}</div>
+                </div>
+            `;
+        }
+        
+        if (performance) {
+            performance.innerHTML = `
+                <div style="font-family: monospace; font-size: 12px; line-height: 1.4;">
+                    <div>🚀 Load Time: ${performance.now().toFixed(2)}ms</div>
+                    <div>🧠 Memory Usage: ${this.getMemoryUsage()}</div>
+                    <div>📱 User Agent: ${navigator.userAgent.substring(0, 50)}...</div>
+                    <div>🌐 Language: ${navigator.language}</div>
+                    <div>📏 Screen: ${screen.width}x${screen.height}</div>
+                    <div>🖥️ Viewport: ${window.innerWidth}x${window.innerHeight}</div>
+                </div>
+            `;
+        }
+    }
+
+    // Dev Tools Functions
+    devGenerateTestData() {
+        const testTransactions = [
+            { type: 'Income', amount: 5000, category: 'Salary', description: 'Monthly Salary', timestamp: new Date().toISOString() },
+            { type: 'Expense', amount: 1200, category: 'Food', description: 'Groceries', timestamp: new Date().toISOString() },
+            { type: 'Expense', amount: 300, category: 'Transportation', description: 'Gas', timestamp: new Date().toISOString() },
+            { type: 'Income', amount: 500, category: 'Freelance', description: 'Side Project', timestamp: new Date().toISOString() },
+            { type: 'Expense', amount: 200, category: 'Entertainment', description: 'Movie Night', timestamp: new Date().toISOString() }
+        ];
+        
+        this.transactions.push(...testTransactions);
+        this.addBudget('Food', 1500, 'monthly');
+        this.addBudget('Transportation', 400, 'monthly');
+        this.addSavingsGoal('Emergency Fund', 10000, new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+        
+        this.saveData();
+        this.updateDisplay();
+        this.loadCharts();
+        this.updateDevStats();
+        this.showToast('Test data generated! 🎉', 'success');
+    }
+
+    devClearAllData() {
+        if (confirm('⚠️ Are you sure you want to clear ALL data? This cannot be undone!')) {
+            this.transactions = [];
+            this.budgets = {};
+            this.savingsGoals = [];
+            this.recurringTransactions = [];
+            this.salaryConfig = { enabled: false, amount: 0, frequency: 'monthly', pay_day: 1, next_pay_date: null };
+            
+            this.saveData();
+            this.updateDisplay();
+            this.loadCharts();
+            this.updateDevStats();
+            this.showToast('All data cleared! 🗑️', 'warning');
+        }
+    }
+
+    devExportDebugInfo() {
+        const debugInfo = {
+            timestamp: new Date().toISOString(),
+            version: '1.0.0',
+            userAgent: navigator.userAgent,
+            screen: { width: screen.width, height: screen.height },
+            viewport: { width: window.innerWidth, height: window.innerHeight },
+            data: {
+                transactions: this.transactions,
+                budgets: this.budgets,
+                savingsGoals: this.savingsGoals,
+                recurringTransactions: this.recurringTransactions,
+                salaryConfig: this.salaryConfig,
+                settings: this.settings
+            },
+            performance: {
+                loadTime: performance.now(),
+                memoryUsage: this.getMemoryUsage(),
+                storageSize: this.getStorageSize()
+            }
+        };
+        
+        const blob = new Blob([JSON.stringify(debugInfo, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pennywise_debug_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        this.showToast('Debug info exported! 📤', 'success');
+    }
+
+    devShowConsole() {
+        console.log('🚀 PENNYWISE DEVELOPER CONSOLE');
+        console.log('================================');
+        console.log('Money Manager Instance:', this);
+        console.log('Transactions:', this.transactions);
+        console.log('Budgets:', this.budgets);
+        console.log('Savings Goals:', this.savingsGoals);
+        console.log('Settings:', this.settings);
+        console.log('================================');
+        this.showToast('Check the browser console! 🖥️', 'info');
+    }
+
+    // Easter Egg Functions
+    devRainbowMode() {
+        document.body.style.animation = 'rainbow 2s linear infinite';
+        this.showToast('🌈 Rainbow mode activated!', 'success');
+        
+        // Add rainbow animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rainbow {
+                0% { filter: hue-rotate(0deg); }
+                100% { filter: hue-rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        setTimeout(() => {
+            document.body.style.animation = '';
+            this.showToast('Rainbow mode deactivated! 🌈', 'info');
+        }, 10000);
+    }
+
+    devMoneyRain() {
+        const moneySymbols = ['💰', '💵', '💸', '💳', '💎', '🏦', '💼'];
+        const container = document.createElement('div');
+        container.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        `;
+        
+        for (let i = 0; i < 50; i++) {
+            const money = document.createElement('div');
+            money.textContent = moneySymbols[Math.floor(Math.random() * moneySymbols.length)];
+            money.style.cssText = `
+                position: absolute;
+                left: ${Math.random() * 100}%;
+                top: -50px;
+                font-size: ${Math.random() * 30 + 20}px;
+                animation: moneyFall ${Math.random() * 3 + 2}s linear forwards;
+            `;
+            container.appendChild(money);
+        }
+        
+        document.body.appendChild(container);
+        
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes moneyFall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        setTimeout(() => {
+            document.body.removeChild(container);
+            this.showToast('💰 Money rain complete!', 'success');
+        }, 5000);
+    }
+
+    devMatrixMode() {
+        const canvas = document.createElement('canvas');
+        canvas.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9998;
+            pointer-events: none;
+        `;
+        document.body.appendChild(canvas);
+        
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = '01';
+        const charArray = chars.split('');
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+        
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ff00';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        };
+        
+        const interval = setInterval(draw, 50);
+        
+        setTimeout(() => {
+            clearInterval(interval);
+            document.body.removeChild(canvas);
+            this.showToast('🔢 Matrix mode complete!', 'success');
+        }, 10000);
+    }
+
+    devKonamiCode() {
+        this.showToast('🎮 Konami Code activated! +30 Lives!', 'success');
+        
+        // Add some fun effects
+        document.body.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            document.body.style.transform = 'scale(1)';
+        }, 200);
+        
+        // Add some extra money
+        this.transactions.push({
+            type: 'Income',
+            amount: 1000,
+            category: 'Gift',
+            description: 'Konami Code Bonus! 🎮',
+            timestamp: new Date().toISOString()
+        });
+        
+        this.saveData();
+        this.updateDisplay();
+        this.showToast('+$1000 Konami Bonus added! 💰', 'success');
+    }
+
+    // Helper functions
+    getStorageSize() {
+        let total = 0;
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                total += localStorage[key].length + key.length;
+            }
+        }
+        return (total / 1024).toFixed(2);
+    }
+
+    getUptime() {
+        const startTime = performance.timing.navigationStart;
+        const currentTime = Date.now();
+        const uptime = currentTime - startTime;
+        return Math.floor(uptime / 1000) + 's';
+    }
+
+    getMemoryUsage() {
+        if (performance.memory) {
+            return (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2) + ' MB';
+        }
+        return 'N/A';
     }
 }
 
