@@ -806,8 +806,10 @@ class MoneyManager {
         
         // Listen for key combinations
         document.addEventListener('keydown', (e) => {
+            console.log('Key pressed:', e.key, 'Ctrl:', e.ctrlKey, 'Shift:', e.shiftKey);
             // Quick dev mode access with Ctrl+Shift+Q
             if (e.ctrlKey && e.shiftKey && e.key === 'Q') {
+                console.log('Dev mode triggered!');
                 this.showDevPanel();
             }
         });
