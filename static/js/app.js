@@ -812,6 +812,11 @@ class MoneyManager {
             if (e.ctrlKey && e.shiftKey && e.key === '`') {
                 this.activateDevMode();
             }
+            
+            // Quick dev mode access with Ctrl+Shift+Q
+            if (e.ctrlKey && e.shiftKey && e.key === 'Q') {
+                this.showDevPanel();
+            }
         });
         
         // Listen for typing when dev mode is active
