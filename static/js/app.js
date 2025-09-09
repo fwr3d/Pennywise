@@ -801,66 +801,26 @@ class MoneyManager {
     // ===== DEVELOPER MODE =====
     setupDevMode() {
         this.devMode = {
-            active: false,
-            sequence: '',
-            targetSequence: 'exman',
             devPanel: null
         };
         
         // Listen for key combinations
         document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key === '`') {
-                this.activateDevMode();
-            }
-            
             // Quick dev mode access with Ctrl+Shift+Q
             if (e.ctrlKey && e.shiftKey && e.key === 'Q') {
                 this.showDevPanel();
             }
         });
-        
-        // Listen for typing when dev mode is active
-        document.addEventListener('keydown', (e) => {
-            if (this.devMode.active && e.key.length === 1) {
-                this.devMode.sequence += e.key.toLowerCase();
-                
-                // Check if sequence matches
-                if (this.devMode.sequence === this.devMode.targetSequence) {
-                    this.showDevPanel();
-                } else if (!this.devMode.targetSequence.startsWith(this.devMode.sequence)) {
-                    // Reset if sequence doesn't match
-                    this.devMode.sequence = '';
-                }
-            }
-        });
-    }
-
-    activateDevMode() {
-        this.devMode.active = true;
-        this.devMode.sequence = '';
-        this.showToast('Dev Mode Activated! Type "exman" to access developer tools', 'info');
-        
-        // Auto-deactivate after 10 seconds
-        setTimeout(() => {
-            if (this.devMode.active) {
-                this.devMode.active = false;
-                this.devMode.sequence = '';
-                this.showToast('Dev Mode Deactivated', 'info');
-            }
-        }, 10000);
     }
 
     showDevPanel() {
-        this.devMode.active = false;
-        this.devMode.sequence = '';
-        
         // Create dev panel if it doesn't exist
         if (!this.devMode.devPanel) {
             this.createDevPanel();
         }
         
         this.devMode.devPanel.style.display = 'flex';
-        this.showToast('Welcome to Developer Mode! 🚀', 'success');
+        this.showToast('Developer Mode - Testing Profiles', 'info');
     }
 
     createDevPanel() {
@@ -877,102 +837,64 @@ class MoneyManager {
             display: none;
             justify-content: center;
             align-items: center;
-            font-family: 'Courier New', monospace;
-            color: #00ff00;
+            font-family: 'Inter', sans-serif;
         `;
         
         panel.innerHTML = `
             <div style="
-                background: #000;
-                border: 2px solid #00ff00;
-                border-radius: 10px;
-                padding: 20px;
-                max-width: 800px;
-                max-height: 600px;
+                background: white;
+                border-radius: 12px;
+                padding: 30px;
+                max-width: 600px;
+                max-height: 500px;
                 overflow-y: auto;
                 position: relative;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             ">
                 <div style="
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    margin-bottom: 20px;
-                    border-bottom: 1px solid #00ff00;
-                    padding-bottom: 10px;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #e5e7eb;
+                    padding-bottom: 15px;
                 ">
-                    <h2 style="color: #00ff00; margin: 0;">🚀 PENNYWISE DEVELOPER MODE</h2>
+                    <h2 style="color: #1f2937; margin: 0; font-size: 24px;">🧪 Testing Profiles</h2>
                     <button onclick="this.parentElement.parentElement.parentElement.style.display='none'" 
                             style="
-                                background: #ff0000;
+                                background: #ef4444;
                                 color: white;
                                 border: none;
-                                padding: 5px 10px;
-                                border-radius: 3px;
+                                padding: 8px 12px;
+                                border-radius: 6px;
                                 cursor: pointer;
+                                font-size: 16px;
                             ">✕</button>
                 </div>
                 
-                <div id="dev-content">
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="color: #00ff00;">📊 Application Stats</h3>
-                        <div id="app-stats"></div>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="color: #00ff00;">🔧 Developer Tools</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                            <button onclick="moneyManager.devGenerateTestData()" 
-                                    style="background: #0066cc; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                📝 Generate Test Data
-                            </button>
-                            <button onclick="moneyManager.devClearAllData()" 
-                                    style="background: #cc0000; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                🗑️ Clear All Data
-                            </button>
-                            <button onclick="moneyManager.devExportDebugInfo()" 
-                                    style="background: #006600; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                📤 Export Debug Info
-                            </button>
-                            <button onclick="moneyManager.devShowConsole()" 
-                                    style="background: #6600cc; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                🖥️ Show Console
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="color: #00ff00;">🎮 Easter Eggs</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                            <button onclick="moneyManager.devRainbowMode()" 
-                                    style="background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                🌈 Rainbow Mode
-                            </button>
-                            <button onclick="moneyManager.devMoneyRain()" 
-                                    style="background: #ffd700; color: black; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                💰 Money Rain
-                            </button>
-                            <button onclick="moneyManager.devMatrixMode()" 
-                                    style="background: #000; color: #00ff00; border: 1px solid #00ff00; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                🔢 Matrix Mode
-                            </button>
-                            <button onclick="moneyManager.devKonamiCode()" 
-                                    style="background: #800080; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-                                🎮 Konami Code
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h3 style="color: #00ff00;">📈 Performance Metrics</h3>
-                        <div id="performance-metrics"></div>
-                    </div>
+                <div style="
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 15px;
+                ">
+                    ${this.generateProfileButtons()}
+                </div>
+                
+                <div style="
+                    margin-top: 20px;
+                    padding: 15px;
+                    background: #f3f4f6;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    color: #6b7280;
+                ">
+                    <strong>Instructions:</strong> Click any profile number to load test data for that profile. Each profile contains different financial scenarios for testing purposes.
                 </div>
             </div>
         `;
         
         document.body.appendChild(panel);
         this.devMode.devPanel = panel;
-        this.updateDevStats();
     }
 
     updateDevStats() {
