@@ -761,23 +761,28 @@ class MoneyManager {
             // Dev mode access with just backslash key
             if (e.key === '\\' || e.code === 'Backslash' || e.keyCode === 220) {
                 console.log('Dev mode triggered via backslash!');
+                e.preventDefault(); // Prevent any default behavior
                 this.showDevPanel();
             }
             
             // Alternative: F12 key for dev mode
             if (e.key === 'F12' || e.code === 'F12') {
                 console.log('Dev mode triggered via F12!');
+                e.preventDefault(); // Prevent any default behavior
                 this.showDevPanel();
             }
         });
     }
 
     showDevPanel() {
+        console.log('showDevPanel called');
         // Create dev panel if it doesn't exist
         if (!this.devMode.devPanel) {
+            console.log('Creating new dev panel');
             this.createDevPanel();
         }
         
+        console.log('Showing dev panel, display:', this.devMode.devPanel.style.display);
         this.devMode.devPanel.style.display = 'flex';
         this.showToast('Developer Mode - Testing Profiles', 'info');
     }
