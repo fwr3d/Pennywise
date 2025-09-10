@@ -1287,11 +1287,30 @@ class MoneyManager {
                 return false;
             }
         }
+        
+        // For step 4 (goals), check if any goal is partially filled
+        if (this.onboarding.currentStep === 4) {
+            const goalItems = currentStep.querySelectorAll('.goal-item');
+            for (let goalItem of goalItems) {
+                const name = goalItem.querySelector('.goal-name').value.trim();
+                const amount = goalItem.querySelector('.goal-amount').value.trim();
+                const date = goalItem.querySelector('.goal-date').value.trim();
+                
+                // If any field is filled, all fields must be filled
+                if (name || amount || date) {
+                    if (!name || !amount || !date) {
+                        this.showToast('Please complete all fields for each goal or leave them empty', 'warning');
+                        return false;
+                    }
+                }
+            }
+        }
+        
         return true;
     }
 
     finishOnboarding() {
-        console.log('finishOnboarding called');
+        console.log('finishOnboarding called, current step:', this.onboarding.currentStep);
         if (this.validateCurrentStep()) {
             console.log('Validation passed, saving data...');
             this.saveOnboardingData();
@@ -1301,8 +1320,9 @@ class MoneyManager {
             this.closeOnboardingModal();
             this.showToast('Welcome to Pennywise! Your profile has been set up.', 'success');
             this.updateDisplay();
+            console.log('Onboarding flow completed successfully');
         } else {
-            console.log('Validation failed');
+            console.log('Validation failed for step:', this.onboarding.currentStep);
         }
     }
 
@@ -1357,10 +1377,10 @@ class MoneyManager {
             }
         });
 
-        // Save financial goals
+        // Save financial goals (only if they have all fields filled)
         const goalItems = document.querySelectorAll('.goal-item');
         goalItems.forEach(item => {
-            const name = item.querySelector('.goal-name').value;
+            const name = item.querySelector('.goal-name').value.trim();
             const amount = parseFloat(item.querySelector('.goal-amount').value);
             const date = item.querySelector('.goal-date').value;
             
