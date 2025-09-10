@@ -196,6 +196,7 @@ class MoneyManager {
         }
         
         this.saveData();
+        this.updateBudgetSpending(); // Update budget spending after adding transaction
         this.showToast('Transaction saved successfully!', 'success');
         this.closeTransactionModal();
         this.updateDisplay();
@@ -528,6 +529,9 @@ class MoneyManager {
 
     updateBudgetSpending() {
         const currentMonth = new Date().toISOString().substring(0, 7);
+        console.log('Updating budget spending for month:', currentMonth);
+        console.log('Current budgets:', this.budgets);
+        console.log('Current transactions:', this.transactions);
         
         Object.keys(this.budgets).forEach(category => {
             const spent = this.transactions
@@ -536,9 +540,11 @@ class MoneyManager {
                            t.timestamp.startsWith(currentMonth))
                 .reduce((sum, t) => sum + t.amount, 0);
             
+            console.log(`Category ${category}: spent ${spent}`);
             this.budgets[category].spent = spent;
         });
         
+        console.log('Updated budgets:', this.budgets);
         this.saveData();
     }
 
