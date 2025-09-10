@@ -1,0 +1,5 @@
+[33m933d519[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Change dev mode access from Ctrl+Shift+C to Ctrl+Shift+\
+[33maf26ed2[m Change dev mode access to Ctrl+Shift+C only and remove visible button
+[33m5a82075[m Add salary income transaction creation and sample data to onboarding
+[33m3deb811[m Fix onboarding completion flow and prevent restart loops
+[33m55bdd58[m Fix onboarding loop by making goals optional and improving validation
