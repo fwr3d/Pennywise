@@ -1538,6 +1538,159 @@ class MoneyManager {
             console.log('Onboarding modal not found!');
         }
     }
+
+    // Dev mode helper methods
+    generateProfileButtons() {
+        let buttons = '';
+        for (let i = 1; i <= 9; i++) {
+            buttons += `
+                <button onclick="moneyManager.loadProfileData(${i})" 
+                        style="
+                            background: linear-gradient(135deg, #10b981, #059669);
+                            color: white;
+                            border: none;
+                            padding: 20px;
+                            border-radius: 12px;
+                            cursor: pointer;
+                            font-size: 18px;
+                            font-weight: bold;
+                            transition: transform 0.2s, box-shadow 0.2s;
+                            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'">
+                    Profile ${i}
+                </button>
+            `;
+        }
+        return buttons;
+    }
+
+    loadProfileData(profileNum) {
+        // Clear existing data
+        this.transactions = [];
+        this.budgets = {};
+        this.savingsGoals = [];
+        this.recurringTransactions = [];
+        
+        // Generate test data based on profile number
+        const testData = this.generateTestDataForProfile(profileNum);
+        
+        // Load the test data
+        this.transactions = testData.transactions;
+        this.budgets = testData.budgets;
+        this.savingsGoals = testData.savingsGoals;
+        this.recurringTransactions = testData.recurringTransactions;
+        
+        // Save and update display
+        this.saveData();
+        this.updateDisplay();
+        
+        // Close dev panel
+        if (this.devMode.devPanel) {
+            this.devMode.devPanel.style.display = 'none';
+        }
+        
+        this.showToast(`Loaded Profile ${profileNum} test data`, 'success');
+    }
+
+    generateTestDataForProfile(profileNum) {
+        const profiles = {
+            1: { // High Income Professional
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Salary', description: 'Software Engineer Salary', amount: 8000, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Expense', category: 'Housing', description: 'Rent', amount: -2500, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Food', description: 'Groceries', amount: -400, date: '2024-09-02', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Housing': 2500, 'Food': 500, 'Entertainment': 300 },
+                savingsGoals: [{ name: 'Emergency Fund', targetAmount: 10000, targetDate: '2024-12-31', currentAmount: 5000 }],
+                recurringTransactions: []
+            },
+            2: { // Student
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Other', description: 'Part-time Job', amount: 1200, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Expense', category: 'Education', description: 'Textbooks', amount: -300, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Food', description: 'Campus Dining', amount: -200, date: '2024-09-02', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Education': 500, 'Food': 300, 'Entertainment': 100 },
+                savingsGoals: [{ name: 'Study Abroad', targetAmount: 5000, targetDate: '2025-06-01', currentAmount: 1200 }],
+                recurringTransactions: []
+            },
+            3: { // Freelancer
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Freelance', description: 'Client Project A', amount: 2500, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Income', category: 'Freelance', description: 'Client Project B', amount: 1800, date: '2024-09-05', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Other', description: 'Business Equipment', amount: -500, date: '2024-09-03', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Business': 1000, 'Personal': 2000, 'Taxes': 800 },
+                savingsGoals: [{ name: 'Tax Fund', targetAmount: 5000, targetDate: '2024-12-31', currentAmount: 2000 }],
+                recurringTransactions: []
+            },
+            4: { // Family with Kids
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Salary', description: 'Primary Income', amount: 6000, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Income', category: 'Salary', description: 'Secondary Income', amount: 3500, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Housing', description: 'Mortgage', amount: -2200, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 4, type: 'Expense', category: 'Education', description: 'Kids Activities', amount: -400, date: '2024-09-02', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Housing': 2500, 'Food': 800, 'Education': 600, 'Transportation': 500 },
+                savingsGoals: [{ name: 'College Fund', targetAmount: 50000, targetDate: '2030-01-01', currentAmount: 15000 }],
+                recurringTransactions: []
+            },
+            5: { // Retiree
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Investment', description: 'Pension', amount: 3000, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Income', category: 'Investment', description: 'Social Security', amount: 1800, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Healthcare', description: 'Medical Bills', amount: -300, date: '2024-09-02', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Healthcare': 500, 'Housing': 1200, 'Food': 400, 'Entertainment': 200 },
+                savingsGoals: [{ name: 'Travel Fund', targetAmount: 10000, targetDate: '2025-06-01', currentAmount: 7500 }],
+                recurringTransactions: []
+            },
+            6: { // Startup Founder
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Investment', description: 'Seed Funding', amount: 50000, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Expense', category: 'Other', description: 'Office Rent', amount: -2000, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Other', description: 'Team Salaries', amount: -15000, date: '2024-09-01', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Operations': 20000, 'Marketing': 5000, 'Development': 10000 },
+                savingsGoals: [{ name: 'Series A Fund', targetAmount: 100000, targetDate: '2025-03-01', currentAmount: 25000 }],
+                recurringTransactions: []
+            },
+            7: { // Gig Worker
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Other', description: 'Uber Earnings', amount: 800, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Income', category: 'Other', description: 'DoorDash', amount: 600, date: '2024-09-02', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Transportation', description: 'Gas', amount: -150, date: '2024-09-01', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Transportation': 300, 'Food': 200, 'Housing': 800 },
+                savingsGoals: [{ name: 'New Car', targetAmount: 15000, targetDate: '2025-12-31', currentAmount: 3000 }],
+                recurringTransactions: []
+            },
+            8: { // Artist/Creative
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Freelance', description: 'Commission Work', amount: 1200, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Expense', category: 'Other', description: 'Art Supplies', amount: -200, date: '2024-09-02', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Entertainment', description: 'Gallery Show', amount: -100, date: '2024-09-03', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Materials': 300, 'Marketing': 200, 'Living': 500 },
+                savingsGoals: [{ name: 'Studio Space', targetAmount: 8000, targetDate: '2025-01-01', currentAmount: 2000 }],
+                recurringTransactions: []
+            },
+            9: { // Minimalist
+                transactions: [
+                    { id: 1, type: 'Income', category: 'Salary', description: 'Remote Work', amount: 4000, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 2, type: 'Expense', category: 'Housing', description: 'Minimal Rent', amount: -800, date: '2024-09-01', timestamp: new Date().toISOString() },
+                    { id: 3, type: 'Expense', category: 'Food', description: 'Simple Meals', amount: -200, date: '2024-09-02', timestamp: new Date().toISOString() }
+                ],
+                budgets: { 'Essentials': 1200, 'Savings': 2000, 'Experiences': 300 },
+                savingsGoals: [{ name: 'Financial Independence', targetAmount: 100000, targetDate: '2030-01-01', currentAmount: 25000 }],
+                recurringTransactions: []
+            }
+        };
+        
+        return profiles[profileNum] || profiles[1];
+    }
 }
 
 // Global functions for HTML onclick handlers
