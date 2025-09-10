@@ -19,7 +19,7 @@ A beautiful, modern money management web application built with pure HTML, CSS, 
 
 ## 🚀 Live Demo
 
-Visit the live application: **[https://yourusername.github.io/Pennywise](https://yourusername.github.io/Pennywise)**
+Visit the live application: **[https://fwr3d.github.io/Pennywise](https://fwr3d.github.io/Pennywise)**
 
 ## 🛠️ Technology Stack
 
@@ -70,7 +70,7 @@ Simply visit the GitHub Pages URL above - no installation required!
    - Replace `yourusername` with your GitHub username
    - Update the live demo link
 
-4. **Your app will be live** at: `https://yourusername.github.io/Pennywise`
+4. **Your app will be live** at: `https://fwr3d.github.io/Pennywise`
 
 ## 📱 How to Use
 
