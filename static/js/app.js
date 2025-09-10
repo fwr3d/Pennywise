@@ -440,6 +440,7 @@ class MoneyManager {
 
     updateBudgetsDisplay() {
         const container = document.getElementById('budgets-grid');
+        console.log('Updating budgets display, budgets:', this.budgets);
         
         if (Object.keys(this.budgets).length === 0) {
             container.innerHTML = '<div class="empty-state">No budgets set. Create your first budget!</div>';
@@ -475,6 +476,7 @@ class MoneyManager {
 
     updateGoalsDisplay() {
         const container = document.getElementById('goals-grid');
+        console.log('Updating goals display, goals:', this.savingsGoals);
         
         if (this.savingsGoals.length === 0) {
             container.innerHTML = '<div class="empty-state">No savings goals set. Create your first goal!</div>';
@@ -518,6 +520,7 @@ class MoneyManager {
             spent: 0,
             created: new Date().toISOString()
         };
+        console.log('Budget added:', this.budgets);
         this.saveData();
         this.showToast(`Budget set for ${category}: $${amount}`, 'success');
         this.updateDisplay();
@@ -565,6 +568,7 @@ class MoneyManager {
         };
         
         this.savingsGoals.push(goal);
+        console.log('Goal added:', this.savingsGoals);
         this.saveData();
         this.showToast(`Savings goal "${name}" created!`, 'success');
         this.updateDisplay();
