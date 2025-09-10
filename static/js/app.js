@@ -812,16 +812,8 @@ class MoneyManager {
         
         // Listen for key combinations
         document.addEventListener('keydown', (e) => {
-            console.log('Key pressed:', e.key, 'Code:', e.code, 'Ctrl:', e.ctrlKey, 'Shift:', e.shiftKey);
-            
-            // Dev mode access with Ctrl+Shift+D (more reliable)
-            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-                console.log('Dev mode triggered!');
-                this.showDevPanel();
-            }
-            
-            // Alternative: Ctrl+Shift+\ (backslash)
-            if (e.ctrlKey && e.shiftKey && (e.key === '\\' || e.code === 'Backslash')) {
+            // Dev mode access with just backslash key
+            if (e.key === '\\' || e.code === 'Backslash') {
                 console.log('Dev mode triggered via backslash!');
                 this.showDevPanel();
             }
@@ -904,7 +896,7 @@ class MoneyManager {
                                 color: #6b7280;
                             ">
                                 <strong>Instructions:</strong> Click any profile number to load test data for that profile. Each profile contains different financial scenarios for testing purposes.<br><br>
-                                <strong>Access:</strong> Press <kbd>Ctrl+Shift+D</kbd> or <kbd>Ctrl+Shift+\</kbd> to open this dev panel.
+                                <strong>Access:</strong> Press <kbd>\</kbd> (backslash key) to open this dev panel.
                             </div>
             </div>
         `;
