@@ -1196,10 +1196,20 @@ class MoneyManager {
 
     // ===== ONBOARDING =====
     checkOnboarding() {
+        // Check if onboarding is already completed in memory
+        if (this.onboarding.completed) {
+            console.log('Onboarding already completed in memory, skipping check');
+            return;
+        }
+        
         const onboardingCompleted = localStorage.getItem('pennywise_onboarding_completed');
         console.log('Onboarding check:', onboardingCompleted);
         if (!onboardingCompleted || onboardingCompleted !== 'true') {
+            console.log('Showing onboarding modal...');
             this.showOnboardingModal();
+        } else {
+            console.log('Onboarding already completed, skipping');
+            this.onboarding.completed = true;
         }
     }
 
@@ -1317,10 +1327,20 @@ class MoneyManager {
             this.onboarding.completed = true;
             localStorage.setItem('pennywise_onboarding_completed', 'true');
             console.log('Onboarding completed, flag set to:', localStorage.getItem('pennywise_onboarding_completed'));
+            
+            // Close modal and show success message
             this.closeOnboardingModal();
             this.showToast('Welcome to Pennywise! Your profile has been set up.', 'success');
             this.updateDisplay();
+            
+            // Prevent any further onboarding checks
+            this.onboarding.completed = true;
             console.log('Onboarding flow completed successfully');
+            
+            // Force a small delay to ensure modal closes
+            setTimeout(() => {
+                console.log('Onboarding completion confirmed');
+            }, 100);
         } else {
             console.log('Validation failed for step:', this.onboarding.currentStep);
         }
@@ -1454,7 +1474,11 @@ class MoneyManager {
     closeOnboardingModal() {
         const modal = document.getElementById('onboarding-modal');
         if (modal) {
+            console.log('Closing onboarding modal...');
             modal.style.display = 'none';
+            console.log('Modal closed, display style:', modal.style.display);
+        } else {
+            console.log('Onboarding modal not found!');
         }
     }
 }

@@ -360,7 +360,7 @@
                 </div>
             </div>
             <div class="modal-body">
-                <form id="onboarding-form" onsubmit="event.preventDefault(); finishOnboarding();">
+                <form id="onboarding-form">
                     <!-- Step 1: Job Information -->
                     <div class="onboarding-step active" id="step-1">
                         <div class="step-content">
@@ -492,7 +492,7 @@
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="prev-step" onclick="previousStep()" style="display: none;">Previous</button>
                         <button type="button" class="btn btn-primary" id="next-step" onclick="nextStep()">Next</button>
-                        <button type="submit" class="btn btn-success" id="finish-setup" style="display: none;">Finish Setup</button>
+                        <button type="button" class="btn btn-success" id="finish-setup" onclick="finishOnboarding()" style="display: none;">Finish Setup</button>
                     </div>
                 </form>
             </div>
