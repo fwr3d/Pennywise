@@ -1519,12 +1519,16 @@ class MoneyManager {
         
         // Generate test data based on profile number
         const testData = this.generateTestDataForProfile(profileNum);
+        console.log(`Loading Profile ${profileNum} data:`, testData);
         
         // Load the test data
         this.transactions = testData.transactions;
         this.budgets = testData.budgets;
         this.savingsGoals = testData.savingsGoals;
         this.recurringTransactions = testData.recurringTransactions;
+        
+        console.log('After loading - budgets:', this.budgets);
+        console.log('After loading - goals:', this.savingsGoals);
         
         // Save and update display
         this.saveData();
