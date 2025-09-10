@@ -87,6 +87,10 @@ class MoneyManager {
     }
 
     saveData() {
+        console.log('saveData() called');
+        console.log('Saving budgets:', this.budgets);
+        console.log('Saving goals:', this.savingsGoals);
+        
         // Save to localStorage
         localStorage.setItem('pennywise_transactions', JSON.stringify(this.transactions));
         localStorage.setItem('pennywise_salary_config', JSON.stringify(this.salaryConfig));
@@ -94,6 +98,8 @@ class MoneyManager {
         localStorage.setItem('pennywise_savings_goals', JSON.stringify(this.savingsGoals));
         localStorage.setItem('pennywise_recurring', JSON.stringify(this.recurringTransactions));
         localStorage.setItem('pennywise_settings', JSON.stringify(this.settings));
+        
+        console.log('Data saved to localStorage');
     }
 
     setupEventListeners() {
@@ -115,22 +121,38 @@ class MoneyManager {
         });
 
         // Budget form
-        document.getElementById('budget-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            this.addBudget(formData.get('category'), formData.get('amount'), formData.get('period'));
-            e.target.reset();
-            this.closeBudgetModal();
-        });
+        const budgetForm = document.getElementById('budget-form');
+        console.log('Budget form found:', budgetForm);
+        if (budgetForm) {
+            budgetForm.addEventListener('submit', (e) => {
+                console.log('Budget form submitted');
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                console.log('Budget form data:', Object.fromEntries(formData.entries()));
+                this.addBudget(formData.get('category'), formData.get('amount'), formData.get('period'));
+                e.target.reset();
+                this.closeBudgetModal();
+            });
+        } else {
+            console.error('Budget form not found!');
+        }
 
         // Goal form
-        document.getElementById('goal-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            this.addSavingsGoal(formData.get('name'), formData.get('amount'), formData.get('date'));
-            e.target.reset();
-            this.closeGoalModal();
-        });
+        const goalForm = document.getElementById('goal-form');
+        console.log('Goal form found:', goalForm);
+        if (goalForm) {
+            goalForm.addEventListener('submit', (e) => {
+                console.log('Goal form submitted');
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                console.log('Goal form data:', Object.fromEntries(formData.entries()));
+                this.addSavingsGoal(formData.get('name'), formData.get('amount'), formData.get('date'));
+                e.target.reset();
+                this.closeGoalModal();
+            });
+        } else {
+            console.error('Goal form not found!');
+        }
     }
 
     updateCategories(type) {
