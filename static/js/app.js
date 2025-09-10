@@ -204,7 +204,6 @@ class MoneyManager {
 
     loadCharts() {
         this.createExpenseChart();
-        this.createMonthlyChart();
     }
 
     createExpenseChart() {
@@ -240,65 +239,6 @@ class MoneyManager {
         Plotly.newPlot('expense-chart', data, layout);
     }
 
-    createMonthlyChart() {
-        // Group transactions by month
-        const monthlyData = {};
-        this.transactions.forEach(transaction => {
-            const date = new Date(transaction.timestamp);
-            const monthKey = date.toISOString().substring(0, 7); // YYYY-MM
-            
-            if (!monthlyData[monthKey]) {
-                monthlyData[monthKey] = { income: 0, expenses: 0 };
-            }
-            
-            if (transaction.type === 'Income') {
-                monthlyData[monthKey].income += transaction.amount;
-            } else {
-                monthlyData[monthKey].expenses += transaction.amount;
-            }
-        });
-        
-        if (Object.keys(monthlyData).length === 0) {
-            document.getElementById('monthly-chart').innerHTML = '<div class="no-data">No spending data available</div>';
-            return;
-        }
-        
-        const sortedMonths = Object.keys(monthlyData).sort();
-        const incomeValues = sortedMonths.map(month => monthlyData[month].income);
-        const expenseValues = sortedMonths.map(month => monthlyData[month].expenses);
-        
-        const data = [
-            {
-                x: sortedMonths,
-                y: incomeValues,
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Income',
-                line: { color: '#10B981', width: 3 },
-                marker: { size: 8 }
-            },
-            {
-                x: sortedMonths,
-                y: expenseValues,
-                type: 'scatter',
-                mode: 'lines+markers',
-                name: 'Expenses',
-                line: { color: '#EF4444', width: 3 },
-                marker: { size: 8 }
-            }
-        ];
-        
-        const layout = {
-            title: 'Income vs Expenses Over Time',
-            xaxis: { title: 'Month' },
-            yaxis: { title: 'Amount ($)' },
-            font: { size: 14 },
-            height: 400,
-            hovermode: 'x unified'
-        };
-        
-        Plotly.newPlot('monthly-chart', data, layout);
-    }
 
     updateDisplay() {
         this.updateSummaryCards();
