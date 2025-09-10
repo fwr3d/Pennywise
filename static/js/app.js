@@ -477,9 +477,12 @@ class MoneyManager {
 
     updateGoalsDisplay() {
         const container = document.getElementById('goals-grid');
+        console.log('updateGoalsDisplay called');
         console.log('Updating goals display, goals:', this.savingsGoals);
+        console.log('Goals container:', container);
         
         if (this.savingsGoals.length === 0) {
+            console.log('No goals found, showing empty state');
             container.innerHTML = '<div class="empty-state">No savings goals set. Create your first goal!</div>';
             return;
         }
@@ -573,8 +576,9 @@ class MoneyManager {
             created: new Date().toISOString()
         };
         
+        console.log('Creating savings goal:', goal);
         this.savingsGoals.push(goal);
-        console.log('Goal added:', this.savingsGoals);
+        console.log('All savings goals after adding:', this.savingsGoals);
         this.saveData();
         this.showToast(`Savings goal "${name}" created!`, 'success');
         this.updateDisplay();
