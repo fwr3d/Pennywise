@@ -1362,6 +1362,55 @@ class MoneyManager {
             next_pay_date: this.calculateNextPayDate(salaryFrequency)
         };
 
+        // Create initial salary income transaction
+        if (salaryAmount > 0) {
+            const salaryTransaction = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                type: 'Income',
+                category: 'Salary',
+                description: `Salary from ${company}`,
+                amount: salaryAmount,
+                date: new Date().toISOString().split('T')[0]
+            };
+            this.transactions.push(salaryTransaction);
+            console.log('Created salary income transaction:', salaryTransaction);
+        }
+
+        // Add a few sample transactions to populate the dashboard
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        const twoDaysAgo = new Date(today);
+        twoDaysAgo.setDate(today.getDate() - 2);
+
+        const sampleTransactions = [
+            {
+                id: Date.now() + 1,
+                timestamp: yesterday.toISOString(),
+                type: 'Expense',
+                category: 'Food',
+                description: 'Grocery shopping',
+                amount: -85.50,
+                date: yesterday.toISOString().split('T')[0]
+            },
+            {
+                id: Date.now() + 2,
+                timestamp: twoDaysAgo.toISOString(),
+                type: 'Expense',
+                category: 'Transportation',
+                description: 'Gas for car',
+                amount: -45.00,
+                date: twoDaysAgo.toISOString().split('T')[0]
+            }
+        ];
+
+        // Only add sample transactions if there are no existing transactions
+        if (this.transactions.length <= 1) { // Only salary transaction
+            this.transactions.push(...sampleTransactions);
+            console.log('Added sample transactions for dashboard demo');
+        }
+
         // Save expenses as recurring transactions
         const expenseItems = document.querySelectorAll('.expense-item');
         expenseItems.forEach(item => {
