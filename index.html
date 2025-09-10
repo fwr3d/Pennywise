@@ -27,6 +27,9 @@
                     <button class="btn btn-secondary" onclick="moneyManager.showDevPanel()" style="background: #f59e0b;">
                         <i class="fas fa-flask"></i> Dev Mode
                     </button>
+                    <button class="btn btn-secondary" onclick="resetOnboarding()" style="background: #ef4444;">
+                        <i class="fas fa-redo"></i> Reset Onboarding
+                    </button>
                     <button class="btn btn-primary" onclick="openTransactionModal()">
                         <i class="fas fa-plus"></i> Add Transaction
                     </button>
@@ -357,7 +360,7 @@
                 </div>
             </div>
             <div class="modal-body">
-                <form id="onboarding-form">
+                <form id="onboarding-form" onsubmit="event.preventDefault(); finishOnboarding();">
                     <!-- Step 1: Job Information -->
                     <div class="onboarding-step active" id="step-1">
                         <div class="step-content">

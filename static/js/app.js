@@ -1197,7 +1197,8 @@ class MoneyManager {
     // ===== ONBOARDING =====
     checkOnboarding() {
         const onboardingCompleted = localStorage.getItem('pennywise_onboarding_completed');
-        if (!onboardingCompleted) {
+        console.log('Onboarding check:', onboardingCompleted);
+        if (!onboardingCompleted || onboardingCompleted !== 'true') {
             this.showOnboardingModal();
         }
     }
@@ -1290,13 +1291,18 @@ class MoneyManager {
     }
 
     finishOnboarding() {
+        console.log('finishOnboarding called');
         if (this.validateCurrentStep()) {
+            console.log('Validation passed, saving data...');
             this.saveOnboardingData();
             this.onboarding.completed = true;
             localStorage.setItem('pennywise_onboarding_completed', 'true');
+            console.log('Onboarding completed, flag set to:', localStorage.getItem('pennywise_onboarding_completed'));
             this.closeOnboardingModal();
             this.showToast('Welcome to Pennywise! Your profile has been set up.', 'success');
             this.updateDisplay();
+        } else {
+            console.log('Validation failed');
         }
     }
 
@@ -1629,6 +1635,11 @@ function addGoal() {
 
 function removeGoal(button) {
     button.parentElement.remove();
+}
+
+function resetOnboarding() {
+    localStorage.removeItem('pennywise_onboarding_completed');
+    location.reload();
 }
 // Initialize the app
 let moneyManager;
