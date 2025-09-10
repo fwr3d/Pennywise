@@ -812,9 +812,8 @@ class MoneyManager {
         
         // Listen for key combinations
         document.addEventListener('keydown', (e) => {
-            console.log('Key pressed:', e.key, 'Ctrl:', e.ctrlKey, 'Shift:', e.shiftKey);
-            // Quick dev mode access with Ctrl+Shift+Q
-            if (e.ctrlKey && e.shiftKey && e.key === 'Q') {
+            // Dev mode access with Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
                 console.log('Dev mode triggered!');
                 this.showDevPanel();
             }
@@ -888,16 +887,17 @@ class MoneyManager {
                     ${this.generateProfileButtons()}
                 </div>
                 
-                <div style="
-                    margin-top: 20px;
-                    padding: 15px;
-                    background: #f3f4f6;
-                    border-radius: 8px;
-                    font-size: 14px;
-                    color: #6b7280;
-                ">
-                    <strong>Instructions:</strong> Click any profile number to load test data for that profile. Each profile contains different financial scenarios for testing purposes.
-                </div>
+                            <div style="
+                                margin-top: 20px;
+                                padding: 15px;
+                                background: #f3f4f6;
+                                border-radius: 8px;
+                                font-size: 14px;
+                                color: #6b7280;
+                            ">
+                                <strong>Instructions:</strong> Click any profile number to load test data for that profile. Each profile contains different financial scenarios for testing purposes.<br><br>
+                                <strong>Access:</strong> Press <kbd>Ctrl+Shift+C</kbd> to open this dev panel.
+                            </div>
             </div>
         `;
         
