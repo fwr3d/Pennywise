@@ -1,0 +1,22 @@
+{
+  "name": "pennywise-money-manager",
+  "version": "1.0.0",
+  "description": "A modern money management application with budget tracking, savings goals, and financial analytics",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "money",
+    "finance",
+    "budget",
+    "savings",
+    "expense-tracker"
+  ],
+  "author": "Pennywise Team",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

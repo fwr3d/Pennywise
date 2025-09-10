@@ -344,6 +344,155 @@
         </div>
     </div>
 
+    <!-- Onboarding Modal -->
+    <div id="onboarding-modal" class="modal">
+        <div class="modal-content onboarding-content">
+            <div class="modal-header">
+                <h2>Welcome to Pennywise! 🎉</h2>
+                <div class="onboarding-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="onboarding-progress"></div>
+                    </div>
+                    <span id="onboarding-step">Step 1 of 4</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="onboarding-form">
+                    <!-- Step 1: Job Information -->
+                    <div class="onboarding-step active" id="step-1">
+                        <div class="step-content">
+                            <h3>💼 Tell us about your job</h3>
+                            <p>This helps us understand your income structure</p>
+                            <div class="form-group">
+                                <label for="job-title">Job Title</label>
+                                <input type="text" id="job-title" placeholder="e.g., Software Engineer, Teacher, Manager" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="company">Company/Organization</label>
+                                <input type="text" id="company" placeholder="e.g., Tech Corp, Local School District" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-frequency">How often do you get paid?</label>
+                                <select id="salary-frequency" required>
+                                    <option value="">Select frequency</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="bi-weekly">Bi-weekly (every 2 weeks)</option>
+                                    <option value="semi-monthly">Semi-monthly (twice a month)</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="annually">Annually</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-amount">Salary Amount (per period)</label>
+                                <input type="number" id="salary-amount" placeholder="e.g., 5000" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Monthly Expenses -->
+                    <div class="onboarding-step" id="step-2">
+                        <div class="step-content">
+                            <h3>🏠 Monthly Expenses</h3>
+                            <p>Let's set up your recurring monthly expenses</p>
+                            <div class="expenses-list" id="expenses-list">
+                                <div class="expense-item">
+                                    <div class="form-group">
+                                        <label>Expense Category</label>
+                                        <select class="expense-category" required>
+                                            <option value="">Select category</option>
+                                            <option value="Housing">Housing (Rent/Mortgage)</option>
+                                            <option value="Utilities">Utilities</option>
+                                            <option value="Food">Food & Groceries</option>
+                                            <option value="Transportation">Transportation</option>
+                                            <option value="Insurance">Insurance</option>
+                                            <option value="Healthcare">Healthcare</option>
+                                            <option value="Entertainment">Entertainment</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Amount (per month)</label>
+                                        <input type="number" class="expense-amount" placeholder="e.g., 1200" min="0" step="0.01" required>
+                                    </div>
+                                    <button type="button" class="btn-remove-expense" onclick="removeExpense(this)">×</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="addExpense()">
+                                <i class="fas fa-plus"></i> Add Another Expense
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Subscriptions -->
+                    <div class="onboarding-step" id="step-3">
+                        <div class="step-content">
+                            <h3>📱 Subscriptions & Services</h3>
+                            <p>Add your recurring subscriptions and services</p>
+                            <div class="subscriptions-list" id="subscriptions-list">
+                                <div class="subscription-item">
+                                    <div class="form-group">
+                                        <label>Service Name</label>
+                                        <input type="text" class="subscription-name" placeholder="e.g., Netflix, Spotify, Gym Membership" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Amount (per month)</label>
+                                        <input type="number" class="subscription-amount" placeholder="e.g., 15.99" min="0" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Billing Cycle</label>
+                                        <select class="subscription-cycle" required>
+                                            <option value="monthly">Monthly</option>
+                                            <option value="yearly">Yearly</option>
+                                            <option value="weekly">Weekly</option>
+                                        </select>
+                                    </div>
+                                    <button type="button" class="btn-remove-subscription" onclick="removeSubscription(this)">×</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="addSubscription()">
+                                <i class="fas fa-plus"></i> Add Another Subscription
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Financial Goals -->
+                    <div class="onboarding-step" id="step-4">
+                        <div class="step-content">
+                            <h3>🎯 Financial Goals</h3>
+                            <p>What are you saving for?</p>
+                            <div class="goals-list" id="goals-list">
+                                <div class="goal-item">
+                                    <div class="form-group">
+                                        <label>Goal Name</label>
+                                        <input type="text" class="goal-name" placeholder="e.g., Emergency Fund, Vacation, New Car" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Target Amount</label>
+                                        <input type="number" class="goal-amount" placeholder="e.g., 10000" min="0" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Target Date</label>
+                                        <input type="date" class="goal-date" required>
+                                    </div>
+                                    <button type="button" class="btn-remove-goal" onclick="removeGoal(this)">×</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="addGoal()">
+                                <i class="fas fa-plus"></i> Add Another Goal
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="prev-step" onclick="previousStep()" style="display: none;">Previous</button>
+                        <button type="button" class="btn btn-primary" id="next-step" onclick="nextStep()">Next</button>
+                        <button type="submit" class="btn btn-success" id="finish-setup" style="display: none;">Finish Setup</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 

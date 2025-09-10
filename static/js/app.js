@@ -24,6 +24,11 @@ class MoneyManager {
             notifications: true,
             autoBackup: true
         };
+        this.onboarding = {
+            currentStep: 1,
+            totalSteps: 4,
+            completed: false
+        };
         this.currentTransactionId = null;
         this.notificationPermission = false;
         
@@ -33,6 +38,7 @@ class MoneyManager {
     async init() {
         this.loadData();
         this.setupEventListeners();
+        this.checkOnboarding();
         this.updateDisplay();
         this.loadCharts();
         this.setupDevMode();
@@ -1187,6 +1193,244 @@ class MoneyManager {
         }
         return 'N/A';
     }
+
+    // ===== ONBOARDING =====
+    checkOnboarding() {
+        const onboardingCompleted = localStorage.getItem('pennywise_onboarding_completed');
+        if (!onboardingCompleted) {
+            this.showOnboardingModal();
+        }
+    }
+
+    showOnboardingModal() {
+        const modal = document.getElementById('onboarding-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            this.onboarding.currentStep = 1;
+            this.updateOnboardingProgress();
+        }
+    }
+
+    updateOnboardingProgress() {
+        const progressFill = document.getElementById('onboarding-progress');
+        const stepText = document.getElementById('onboarding-step');
+        if (progressFill && stepText) {
+            const progress = (this.onboarding.currentStep / this.onboarding.totalSteps) * 100;
+            progressFill.style.width = `${progress}%`;
+            stepText.textContent = `Step ${this.onboarding.currentStep} of ${this.onboarding.totalSteps}`;
+        }
+    }
+
+    nextStep() {
+        if (this.validateCurrentStep()) {
+            if (this.onboarding.currentStep < this.onboarding.totalSteps) {
+                this.onboarding.currentStep++;
+                this.showStep(this.onboarding.currentStep);
+                this.updateOnboardingProgress();
+                this.updateNavigationButtons();
+            }
+        }
+    }
+
+    previousStep() {
+        if (this.onboarding.currentStep > 1) {
+            this.onboarding.currentStep--;
+            this.showStep(this.onboarding.currentStep);
+            this.updateOnboardingProgress();
+            this.updateNavigationButtons();
+        }
+    }
+
+    showStep(stepNumber) {
+        // Hide all steps
+        document.querySelectorAll('.onboarding-step').forEach(step => {
+            step.classList.remove('active');
+        });
+        
+        // Show current step
+        const currentStep = document.getElementById(`step-${stepNumber}`);
+        if (currentStep) {
+            currentStep.classList.add('active');
+        }
+    }
+
+    updateNavigationButtons() {
+        const prevBtn = document.getElementById('prev-step');
+        const nextBtn = document.getElementById('next-step');
+        const finishBtn = document.getElementById('finish-setup');
+
+        if (prevBtn) {
+            prevBtn.style.display = this.onboarding.currentStep > 1 ? 'inline-block' : 'none';
+        }
+        
+        if (nextBtn && finishBtn) {
+            if (this.onboarding.currentStep === this.onboarding.totalSteps) {
+                nextBtn.style.display = 'none';
+                finishBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                finishBtn.style.display = 'none';
+            }
+        }
+    }
+
+    validateCurrentStep() {
+        const currentStep = document.getElementById(`step-${this.onboarding.currentStep}`);
+        if (!currentStep) return false;
+
+        const requiredFields = currentStep.querySelectorAll('[required]');
+        for (let field of requiredFields) {
+            if (!field.value.trim()) {
+                field.focus();
+                this.showToast('Please fill in all required fields', 'warning');
+                return false;
+            }
+        }
+        return true;
+    }
+
+    finishOnboarding() {
+        if (this.validateCurrentStep()) {
+            this.saveOnboardingData();
+            this.onboarding.completed = true;
+            localStorage.setItem('pennywise_onboarding_completed', 'true');
+            this.closeOnboardingModal();
+            this.showToast('Welcome to Pennywise! Your profile has been set up.', 'success');
+            this.updateDisplay();
+        }
+    }
+
+    saveOnboardingData() {
+        // Save job information
+        const jobTitle = document.getElementById('job-title').value;
+        const company = document.getElementById('company').value;
+        const salaryFrequency = document.getElementById('salary-frequency').value;
+        const salaryAmount = parseFloat(document.getElementById('salary-amount').value);
+
+        // Update salary config
+        this.salaryConfig = {
+            enabled: true,
+            amount: salaryAmount,
+            frequency: salaryFrequency,
+            pay_day: 1,
+            next_pay_date: this.calculateNextPayDate(salaryFrequency)
+        };
+
+        // Save expenses as recurring transactions
+        const expenseItems = document.querySelectorAll('.expense-item');
+        expenseItems.forEach(item => {
+            const category = item.querySelector('.expense-category').value;
+            const amount = parseFloat(item.querySelector('.expense-amount').value);
+            
+            if (category && amount > 0) {
+                this.addRecurringTransaction({
+                    description: `${category} Expense`,
+                    amount: -amount,
+                    category: category,
+                    frequency: 'monthly',
+                    next_date: this.getNextMonthDate()
+                });
+            }
+        });
+
+        // Save subscriptions as recurring transactions
+        const subscriptionItems = document.querySelectorAll('.subscription-item');
+        subscriptionItems.forEach(item => {
+            const name = item.querySelector('.subscription-name').value;
+            const amount = parseFloat(item.querySelector('.subscription-amount').value);
+            const cycle = item.querySelector('.subscription-cycle').value;
+            
+            if (name && amount > 0) {
+                this.addRecurringTransaction({
+                    description: name,
+                    amount: -amount,
+                    category: 'Subscriptions',
+                    frequency: cycle,
+                    next_date: this.getNextDateForCycle(cycle)
+                });
+            }
+        });
+
+        // Save financial goals
+        const goalItems = document.querySelectorAll('.goal-item');
+        goalItems.forEach(item => {
+            const name = item.querySelector('.goal-name').value;
+            const amount = parseFloat(item.querySelector('.goal-amount').value);
+            const date = item.querySelector('.goal-date').value;
+            
+            if (name && amount > 0 && date) {
+                this.addSavingsGoal({
+                    name: name,
+                    targetAmount: amount,
+                    targetDate: date,
+                    currentAmount: 0
+                });
+            }
+        });
+
+        // Save all data
+        this.saveData();
+    }
+
+    calculateNextPayDate(frequency) {
+        const today = new Date();
+        const nextDate = new Date(today);
+        
+        switch (frequency) {
+            case 'weekly':
+                nextDate.setDate(today.getDate() + 7);
+                break;
+            case 'bi-weekly':
+                nextDate.setDate(today.getDate() + 14);
+                break;
+            case 'semi-monthly':
+                nextDate.setDate(15);
+                if (nextDate <= today) {
+                    nextDate.setMonth(today.getMonth() + 1);
+                }
+                break;
+            case 'monthly':
+                nextDate.setMonth(today.getMonth() + 1);
+                break;
+            case 'annually':
+                nextDate.setFullYear(today.getFullYear() + 1);
+                break;
+        }
+        
+        return nextDate.toISOString().split('T')[0];
+    }
+
+    getNextMonthDate() {
+        const today = new Date();
+        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+        return nextMonth.toISOString().split('T')[0];
+    }
+
+    getNextDateForCycle(cycle) {
+        const today = new Date();
+        const nextDate = new Date(today);
+        
+        switch (cycle) {
+            case 'weekly':
+                nextDate.setDate(today.getDate() + 7);
+                break;
+            case 'monthly':
+                nextDate.setMonth(today.getMonth() + 1);
+                break;
+            case 'yearly':
+                nextDate.setFullYear(today.getFullYear() + 1);
+                break;
+        }
+        
+        return nextDate.toISOString().split('T')[0];
+    }
+
+    closeOnboardingModal() {
+        const modal = document.getElementById('onboarding-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
 }
 
 // Global functions for HTML onclick handlers
@@ -1286,6 +1530,106 @@ function handleFileImport(input) {
     }
 }
 
+// Global functions for onboarding
+function nextStep() {
+    moneyManager.nextStep();
+}
+
+function previousStep() {
+    moneyManager.previousStep();
+}
+
+function finishOnboarding() {
+    moneyManager.finishOnboarding();
+}
+
+function addExpense() {
+    const expensesList = document.getElementById('expenses-list');
+    const expenseItem = document.createElement('div');
+    expenseItem.className = 'expense-item';
+    expenseItem.innerHTML = `
+        <div class="form-group">
+            <label>Expense Category</label>
+            <select class="expense-category" required>
+                <option value="">Select category</option>
+                <option value="Housing">Housing (Rent/Mortgage)</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Food">Food & Groceries</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Amount (per month)</label>
+            <input type="number" class="expense-amount" placeholder="e.g., 1200" min="0" step="0.01" required>
+        </div>
+        <button type="button" class="btn-remove-expense" onclick="removeExpense(this)">×</button>
+    `;
+    expensesList.appendChild(expenseItem);
+}
+
+function removeExpense(button) {
+    button.parentElement.remove();
+}
+
+function addSubscription() {
+    const subscriptionsList = document.getElementById('subscriptions-list');
+    const subscriptionItem = document.createElement('div');
+    subscriptionItem.className = 'subscription-item';
+    subscriptionItem.innerHTML = `
+        <div class="form-group">
+            <label>Service Name</label>
+            <input type="text" class="subscription-name" placeholder="e.g., Netflix, Spotify, Gym Membership" required>
+        </div>
+        <div class="form-group">
+            <label>Amount (per month)</label>
+            <input type="number" class="subscription-amount" placeholder="e.g., 15.99" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label>Billing Cycle</label>
+            <select class="subscription-cycle" required>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="weekly">Weekly</option>
+            </select>
+        </div>
+        <button type="button" class="btn-remove-subscription" onclick="removeSubscription(this)">×</button>
+    `;
+    subscriptionsList.appendChild(subscriptionItem);
+}
+
+function removeSubscription(button) {
+    button.parentElement.remove();
+}
+
+function addGoal() {
+    const goalsList = document.getElementById('goals-list');
+    const goalItem = document.createElement('div');
+    goalItem.className = 'goal-item';
+    goalItem.innerHTML = `
+        <div class="form-group">
+            <label>Goal Name</label>
+            <input type="text" class="goal-name" placeholder="e.g., Emergency Fund, Vacation, New Car" required>
+        </div>
+        <div class="form-group">
+            <label>Target Amount</label>
+            <input type="number" class="goal-amount" placeholder="e.g., 10000" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label>Target Date</label>
+            <input type="date" class="goal-date" required>
+        </div>
+        <button type="button" class="btn-remove-goal" onclick="removeGoal(this)">×</button>
+    `;
+    goalsList.appendChild(goalItem);
+}
+
+function removeGoal(button) {
+    button.parentElement.remove();
+}
 // Initialize the app
 let moneyManager;
 document.addEventListener('DOMContentLoaded', () => {
