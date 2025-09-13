@@ -27,7 +27,8 @@
                     <button class="btn btn-secondary" onclick="resetOnboarding()" style="background: #ef4444;">
                         <i class="fas fa-redo"></i> Reset Onboarding
                     </button>
-                    <button class="btn btn-secondary" onclick="moneyManager.showDevPanel()" style="background: #8b5cf6;">
+                    <!-- Invisible dev mode button for secret access -->
+                    <button class="btn btn-secondary" onclick="moneyManager.showDevPanel()" style="opacity: 0; pointer-events: none; position: absolute; left: -9999px;">
                         <i class="fas fa-code"></i> Dev Mode
                     </button>
                     <button class="btn btn-primary" onclick="openTransactionModal()">

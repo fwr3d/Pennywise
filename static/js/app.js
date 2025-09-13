@@ -82,8 +82,7 @@ class MoneyManager {
             document.body.classList.add('dark-mode');
         }
         
-        // Request notification permission
-        this.requestNotificationPermission();
+        // Notification permission disabled
     }
 
     saveData() {
@@ -681,12 +680,10 @@ class MoneyManager {
         this.showToast(`Dark mode ${this.settings.darkMode ? 'enabled' : 'disabled'}`, 'success');
     }
 
-    // Notifications
+    // Notifications - disabled
     async requestNotificationPermission() {
-        if ('Notification' in window && this.settings.notifications) {
-            const permission = await Notification.requestPermission();
-            this.notificationPermission = permission === 'granted';
-        }
+        // Notification permission requests disabled
+        this.notificationPermission = false;
     }
 
     showNotification(title, body, icon = null) {
@@ -783,25 +780,43 @@ class MoneyManager {
     // ===== DEVELOPER MODE =====
     setupDevMode() {
         this.devMode = {
-            devPanel: null
+            devPanel: null,
+            secretSequence: [],
+            secretKey: ['Control', 'Alt', 'D'], // Secret key combination: Ctrl+Alt+D
+            devCode: ['KeyD', 'KeyE', 'KeyV'] // Secret sequence: DEV
         };
         
+        // Store reference to this for the event listener
+        const self = this;
+        
         // Listen for key combinations
-        document.addEventListener('keydown', (e) => {
-            console.log('Key pressed:', e.key, 'Code:', e.code, 'KeyCode:', e.keyCode);
-            
-            // Dev mode access with just backslash key
-            if (e.key === '\\' || e.code === 'Backslash' || e.keyCode === 220) {
-                console.log('Dev mode triggered via backslash!');
-                e.preventDefault(); // Prevent any default behavior
-                this.showDevPanel();
+        document.addEventListener('keydown', function(e) {
+            // Check for secret key combination (Ctrl+Alt+D)
+            if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'd') {
+                console.log('Dev mode triggered via secret key combination!');
+                e.preventDefault();
+                self.showDevPanel();
+                return;
             }
             
-            // Alternative: F12 key for dev mode
-            if (e.key === 'F12' || e.code === 'F12') {
-                console.log('Dev mode triggered via F12!');
-                e.preventDefault(); // Prevent any default behavior
-                this.showDevPanel();
+            // Check for DEV sequence
+            self.devMode.secretSequence.push(e.code);
+            
+            // Keep only the last 3 key presses
+            if (self.devMode.secretSequence.length > 3) {
+                self.devMode.secretSequence.shift();
+            }
+            
+            // Check if the sequence matches DEV code
+            if (self.devMode.secretSequence.length >= self.devMode.devCode.length) {
+                const recentSequence = self.devMode.secretSequence.slice(-self.devMode.devCode.length);
+                if (recentSequence.join(',') === self.devMode.devCode.join(',')) {
+                    console.log('Dev mode triggered via DEV sequence!');
+                    e.preventDefault();
+                    self.showDevPanel();
+                    self.devMode.secretSequence = []; // Reset sequence
+                    return;
+                }
             }
         });
     }
@@ -813,6 +828,9 @@ class MoneyManager {
             console.log('Creating new dev panel');
             this.createDevPanel();
         }
+        
+        // Reset secret sequence when opening dev panel
+        this.devMode.secretSequence = [];
         
         console.log('Showing dev panel, display:', this.devMode.devPanel.style.display);
         this.devMode.devPanel.style.display = 'flex';
@@ -885,7 +903,7 @@ class MoneyManager {
                                 color: #6b7280;
                             ">
                                 <strong>Instructions:</strong> Click any profile number to load test data for that profile. Each profile contains different financial scenarios for testing purposes.<br><br>
-                                <strong>Access:</strong> Press <kbd>\</kbd> (backslash) or <kbd>F12</kbd> to open this dev panel.
+                                <strong>Secret Access:</strong> Press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd> or type <kbd>D</kbd><kbd>E</kbd><kbd>V</kbd> to open this dev panel.
                             </div>
             </div>
         `;
@@ -1571,10 +1589,13 @@ class MoneyManager {
         this.saveData();
         this.updateDisplay();
         
-        // Close dev panel
+        // Close dev panel but keep it accessible
         if (this.devMode.devPanel) {
             this.devMode.devPanel.style.display = 'none';
         }
+        
+        // Reset the secret sequence to ensure it can be used again
+        this.devMode.secretSequence = [];
         
         this.showToast(`Loaded Profile ${profileNum} test data`, 'success');
     }
@@ -1880,8 +1901,65 @@ function resetOnboarding() {
     localStorage.removeItem('pennywise_onboarding_completed');
     location.reload();
 }
+
+// Global function to access dev mode (for debugging)
+function openDevMode() {
+    if (window.moneyManager && window.moneyManager.showDevPanel) {
+        window.moneyManager.showDevPanel();
+    } else {
+        console.log('MoneyManager not available yet');
+    }
+}
+
+// Global function to reset all data
+function resetAllData() {
+    if (window.moneyManager) {
+        if (confirm('⚠️ Are you sure you want to clear ALL data? This cannot be undone!')) {
+            window.moneyManager.transactions = [];
+            window.moneyManager.budgets = {};
+            window.moneyManager.savingsGoals = [];
+            window.moneyManager.recurringTransactions = [];
+            window.moneyManager.salaryConfig = { enabled: false, amount: 0, frequency: 'monthly', pay_day: 1, next_pay_date: null };
+            
+            window.moneyManager.saveData();
+            window.moneyManager.updateDisplay();
+            window.moneyManager.loadCharts();
+            
+            alert('All data has been reset!');
+        }
+    } else {
+        console.log('MoneyManager not available yet');
+    }
+}
 // Initialize the app
 let moneyManager;
 document.addEventListener('DOMContentLoaded', () => {
     moneyManager = new MoneyManager();
+    
+    // Backup dev mode access - multiple key combinations
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+Shift+F12
+        if (e.ctrlKey && e.shiftKey && (e.key === 'F12' || e.code === 'F12')) {
+            e.preventDefault();
+            if (moneyManager && moneyManager.showDevPanel) {
+                moneyManager.showDevPanel();
+            }
+        }
+        
+        // Simple Ctrl+Shift+Enter
+        if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+            e.preventDefault();
+            if (moneyManager && moneyManager.showDevPanel) {
+                moneyManager.showDevPanel();
+            }
+        }
+        
+        // Simple Ctrl+Shift+Space
+        if (e.ctrlKey && e.shiftKey && e.code === 'Space') {
+            e.preventDefault();
+            if (moneyManager && moneyManager.showDevPanel) {
+                moneyManager.showDevPanel();
+            }
+        }
+    });
 });
